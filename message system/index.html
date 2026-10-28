@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#11162a" />
+  <title>Pingline — Message Queue Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="message-simulation">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#simulator"><span class="brand-mark">p</span><span>pingline<span class="brand-light"> lab</span></span></a>
+      <div class="workspace-label">WORKSPACE</div>
+      <div class="workspace-chip"><span class="workspace-avatar">OS</span><span><b>Operating Systems</b><small>Producer · Consumer</small></span><span class="chevron">⌄</span></div>
+      <div class="sidebar-section-title">YOUR MESSAGES <span>＋</span></div>
+      <nav class="conversation-list" aria-label="Conversation examples">
+        <a class="conversation active" href="#simulator"><span class="conversation-icon violet">#</span><span><b>project-group</b><small>Hey! Are we meeting at 3?</small></span><i class="unread">2</i></a>
+        <a class="conversation" href="#simulator"><span class="conversation-icon mint">JD</span><span><b>Jordan Davis</b><small>Shared the latest files</small></span></a>
+        <a class="conversation" href="#simulator"><span class="conversation-icon amber">SK</span><span><b>Sam Kim</b><small>Thanks, that works!</small></span></a>
+      </nav>
+      <div class="sidebar-note"><span class="online-dot"></span><div><b>Message server</b><small id="sidebarServerStatus">Connected · queue ready</small></div></div>
+      <div class="sidebar-profile"><div class="profile-avatar">AM</div><div><b>Alex Morgan</b><small>Simulation owner</small></div><span class="profile-menu">···</span></div>
+    </aside>
+
+    <main class="main-content" id="simulator">
+      <header class="topbar"><div class="breadcrumb"><span>Workspace</span><b>/</b><span>Message queue lab</span></div><div class="top-actions"><span class="saved"><i></i> Autosaved</span><button class="icon-button" id="guideBtn" aria-label="Open quick guide">?</button></div></header>
+      <section class="page-heading"><div><div class="eyebrow"><span class="eyebrow-dot"></span> OPERATING SYSTEMS · SYNCHRONIZATION</div><h1>Chat message pipeline</h1><p>Watch senders publish messages, the server queue hold them, and recipients read them.</p></div><div class="heading-badge"><span>✳</span> INTERACTIVE LAB</div></section>
+      <section class="metrics" aria-label="Simulation metrics">
+        <article class="metric-card"><div class="metric-top"><span>MESSAGES DELIVERED</span><span class="metric-symbol aqua">↗</span></div><strong id="deliveriesMetric">08</strong><div class="metric-foot"><span class="positive">+2</span> this session</div></article>
+        <article class="metric-card"><div class="metric-top"><span>IN SERVER QUEUE</span><span class="metric-symbol blue">▰</span></div><strong id="availableMetric">03 <small>/ 05</small></strong><div class="metric-foot">Bounded message buffer</div></article>
+        <article class="metric-card"><div class="metric-top"><span>RECIPIENTS WAITING</span><span class="metric-symbol amber">◷</span></div><strong id="waitingMetric">02</strong><div class="metric-foot" id="requestsFoot">2 of 20 recipient requests</div></article>
+        <article class="metric-card"><div class="metric-top"><span>QUEUE ACCESS</span><span class="metric-symbol green">⌁</span></div><strong class="status-value"><i class="status-dot" id="syncDot"></i><span id="syncMetric">Synchronized</span></strong><div class="metric-foot" id="syncFoot">No queue conflicts</div></article>
+      </section>
+
+      <section class="simulation-card">
+        <div class="card-heading"><div><div class="section-kicker">MESSAGE ROUTER <span class="router-pulse"></span></div><h2>Live conversation flow</h2><p>Each envelope travels through a shared queue before it reaches a recipient.</p></div><div class="live-controls"><button id="autoRunBtn" class="auto-run"><span class="play-symbol">▶</span><span id="autoRunLabel">Start message flow</span></button><div class="live-pill"><span></span> LIVE</div></div></div>
+        <div class="message-preview" id="messagePreview"><div class="preview-avatar">JD</div><div class="preview-copy"><span class="preview-meta">LATEST CHAT MESSAGE <b id="previewStatus">IN QUEUE</b></span><strong id="previewText">Hey! Are we still meeting at 3?</strong><small id="previewSender">Jordan → Project group</small></div><span class="preview-envelope">✉</span></div>
+        <div class="system-map" id="systemMap">
+          <div class="route-strip"><span class="route-endpoint"><i class="route-icon sender-route">↗</i> SENDERS</span><div class="flow-lane"><div class="flow-line"><i></i><i></i><i></i><i></i><span class="flow-arrow">›</span></div><span class="moving-drop" id="movingDrop">✉</span></div><span class="route-label">PUBLISH</span><div class="flow-lane reverse"><div class="flow-line"><i></i><i></i><i></i><i></i><span class="flow-arrow">›</span></div><span class="moving-drop" id="movingDrop2">✉</span></div><span class="route-endpoint"><i class="route-icon recipient-route">↙</i> RECIPIENTS</span></div>
+          <div class="message-panels">
+            <section class="chat-pane endpoint producer">
+              <div class="pane-heading"><div class="pane-avatar sender-avatar">AM</div><div><b>Alex Morgan</b><small><i class="online-dot"></i> Sender · online</small></div><span class="pane-menu">•••</span></div>
+              <div class="sender-context"><span class="context-label">SENDING TO</span><b># project-group</b><small>3 members · shared conversation</small></div>
+              <div class="composer-preview"><label for="customMessage">COMPOSE A MESSAGE</label><textarea id="customMessage" maxlength="140" placeholder="Type a message to publish…"></textarea><div class="composer-foot"><span>Up to 140 characters</span><span>↵</span></div></div>
+              <div class="sender-footer"><span><i class="server-dot"></i> Connected to server</span><span class="keyboard-hint">P to send</span></div>
+            </section>
+            <section class="queue-pane buffer-column">
+              <div class="queue-pane-head"><div><span class="queue-icon">▤</span><div><b>Message server</b><small>FIFO · shared queue</small></div></div><div class="queue-capacity-tools"><button id="capacityDown" aria-label="Decrease queue capacity">−</button><span class="buffer-capacity"><span id="bufferCount">3</span> / <span id="capacityLabel">5</span></span><button id="capacityUp" aria-label="Increase queue capacity">+</button></div></div>
+              <div class="queue-health"><span>QUEUE OCCUPANCY</span><b id="queueCaption">3 / 5 slots used</b><em id="queueLoad">60% loaded</em></div><div class="queue-meter"><span class="water-level" id="queueLevel"></span></div>
+              <div class="buffer-track"><div class="buffer-slot filled"><div class="message-card-icon">✉</div><span class="slot-number">01</span></div><div class="buffer-slot filled"><div class="message-card-icon">✉</div><span class="slot-number">02</span></div><div class="buffer-slot filled"><div class="message-card-icon">✉</div><span class="slot-number">03</span></div><div class="buffer-slot empty"><span class="slot-number">04</span><span class="empty-plus">＋</span></div><div class="buffer-slot empty"><span class="slot-number">05</span><span class="empty-plus">＋</span></div></div>
+              <div class="queue-empty-note" id="producerStatus"><span class="online-dot"></span> Ready to accept messages</div>
+              <div class="queue-lock" id="lockStatus">♙ Queue protected by synchronization</div>
+            </section>
+            <section class="chat-pane endpoint consumer">
+              <div class="pane-heading"><div class="pane-avatar group-avatar">#</div><div><b>Project group</b><small><i class="online-dot"></i> Recipient inbox · 3 online</small></div><span class="pane-menu">•••</span></div>
+              <div class="recipient-message-list"><div class="chat-message incoming"><i class="contact-avatar">JD</i><span class="chat-bubble">Hey! Are we still meeting at 3?</span><small>10:42</small></div><div class="chat-message outgoing"><span class="chat-bubble reply">Yep, just sent the notes over.</span><small>10:43 · ✓✓</small></div><div class="chat-message incoming"><i class="contact-avatar alternate">SK</i><span class="chat-bubble">Got them, thanks!</span><small>10:43</small></div><div class="incoming-stream" id="requestStream" aria-label="Waiting recipient requests"></div></div>
+              <div class="recipient-footer"><div class="avatars"><i>JD</i><i>SK</i><i>+</i></div><strong id="requestLabel">2 recipients</strong><span>waiting to receive</span><span class="recipient-count-status" id="consumerStatus">2 recipients waiting</span><button class="request-add" id="requestAdd">+ recipient</button></div>
+            </section>
+          </div>
+        </div>
+        <div class="system-footer"><div class="legend-note"><span class="legend-producer"></span> Producer <span class="legend-connector">→</span><span class="legend-buffer"></span> Bounded queue <span class="legend-connector">→</span><span class="legend-consumer"></span> Consumer</div><div class="lock-note"><span>⌘</span> <span id="sidebarStatus">Mutual exclusion is active</span></div></div>
+      </section>
+
+      <div class="lower-grid">
+        <section class="control-card"><div class="section-title"><div><div class="section-kicker">CONTROL ROOM</div><h2>Simulation setup</h2><p>Shape the traffic, queue, and recipient demand.</p></div><button class="reset-button" id="resetBtn">↺ <span>Reset</span></button></div>
+          <div class="setup-panel"><div class="setup-fields"><label>Starting messages<input id="setupCount" type="number" min="0" max="8" value="3"></label><label>Queue capacity <b id="capacityValue">5</b><input id="setupCapacity" type="number" min="1" max="8" value="5"></label><label>Recipients waiting<input id="setupRequests" type="number" min="0" max="99" value="2"></label><label>Total recipient requests<input id="setupTotalRequests" type="number" min="0" max="99" value="20"></label><label>Requests per burst<input id="setupBurstSize" type="number" min="1" max="20" value="4"></label></div><div class="setup-footer"><span>Starting messages must fit inside queue capacity.</span><button id="applySetup" class="apply-setup">Apply setup</button></div></div>
+          <div class="control-divider"><span>PROCESS CONTROLS</span><div class="speed-select"><button class="speed-option" data-speed="slow">Slow</button><button class="speed-option selected" data-speed="normal">Normal</button><button class="speed-option" data-speed="fast">Fast</button></div></div>
+          <div class="control-buttons"><button class="run-button produce-button" id="produceBtn"><span class="button-icon">↗</span><span><strong>Publish message</strong><small>Produce and enqueue</small></span><kbd>P</kbd></button><button class="run-button consume-button" id="consumeBtn"><span class="button-icon">↙</span><span><strong>Read next message</strong><small>Consume from queue</small></span><kbd>D</kbd></button></div>
+          <div class="toggle-grid"><div class="race-toggle-row request-mode-row"><div class="race-copy"><span class="race-icon request-mode-icon">⇉</span><div><strong>Concurrent arrivals</strong><span>Several recipients request together</span></div></div><label class="switch"><input type="checkbox" id="requestBurstToggle"><span class="slider"></span></label></div><div class="race-toggle-row"><div class="race-copy"><span class="race-icon">⚡</span><div><strong>Race condition</strong><span>Disable queue synchronization</span></div></div><label class="switch"><input type="checkbox" id="raceToggle"><span class="slider"></span></label></div></div>
+        </section>
+        <section class="activity-card"><div class="section-title"><div><div class="section-kicker">SYSTEM TRACE</div><h2>Queue activity</h2><p>Messages published, delivered, and blocked.</p></div><button class="clear-button" id="clearLog">Clear</button></div><div class="activity-list" id="activityList"></div></section>
+      </div>
+      <footer class="page-footer"><span>Chat message producer–consumer model</span><span>Bounded buffer · FIFO · mutual exclusion</span></footer>
+    </main>
+  </div>
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+  <dialog id="guideDialog"><div class="dialog-content"><button class="dialog-close" id="closeGuide" aria-label="Close">×</button><div class="eyebrow"><span class="eyebrow-dot"></span> QUICK GUIDE</div><h2>How the message pipeline works</h2><div class="guide-steps"><div><span>01</span><p><b>Producer</b><br>A sender publishes a chat message into the server queue.</p></div><div><span>02</span><p><b>Bounded queue</b><br>The FIFO buffer has limited slots. Producers wait when it is full.</p></div><div><span>03</span><p><b>Consumer</b><br>A recipient reads the oldest queued message. Consumers wait when it is empty.</p></div><div><span>⚡</span><p><b>Race condition</b><br>Disable synchronization, then publish and read at the same time to expose a lost update.</p></div></div><button class="primary-dialog-button" id="gotIt">Got it</button></div></dialog>
+  <script src="app.js"></script>
+</body>
+</html>
